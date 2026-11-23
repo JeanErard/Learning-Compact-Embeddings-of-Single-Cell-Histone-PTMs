@@ -12,13 +12,13 @@ def NMI_ARI(anndata, clust='Kmeans') :
     
     return NMI, ARI
 
-def ASW_LISI(anndata, clust='Kmeans_label') :
-    ASW = silhouette_label(X=anndata.obsm['X_lsi'], labels=anndata.obs[clust])
-    LISI = hm.compute_lisi(X=anndata.obsm['X_lsi'], metadata=anndata.obs, label_colnames=[clust])
+def ASW_LISI(anndata, clust='Kmeans_label', type_obs = 'X_lsi') :
+    ASW = silhouette_label(X=anndata.obsm[type_obs], labels=anndata.obs[clust])
+    LISI = hm.compute_lisi(X=anndata.obsm[type_obs], metadata=anndata.obs, label_colnames=[clust])
     mean_LISI = np.mean(LISI)
     return ASW, mean_LISI
 
-def clust_score(anndata, nmi_ari=True, asw_lisi=True, clust_name='Kmeans') :
+def clust_score(anndata, nmi_ari=True, asw_lisi=True, clust_name='Kmeans', type_obs='X_lsi') :
     print(f'Clustering score for {clust_name} :')
     result = []
     if nmi_ari :
@@ -27,7 +27,7 @@ def clust_score(anndata, nmi_ari=True, asw_lisi=True, clust_name='Kmeans') :
         result.append(float(NMI))
         result.append(float(ARI))
     if asw_lisi :
-        ASW, LISI = ASW_LISI(anndata, clust=clust_name)
+        ASW, LISI = ASW_LISI(anndata, clust=clust_name, type_obs=type_obs)
         print(f' - ASW score : {ASW:.3f}, LISI score (mean) : {LISI.mean():.3f}')
         result.append(float(ASW))
         result.append(float(LISI))
