@@ -11,6 +11,19 @@ def prevalence_filtering(anndata, threshold=50) :
     anndata_filtered = anndata[:, keep]
     return anndata_filtered
 
+'''def prevalence_filtering_fit(anndata, threshold=50):
+    count_col = anndata.X.getnnz(axis=0)
+    keep = count_col >= threshold
+
+    print(f"Number of bins kept: {keep.sum()}")
+
+    return keep
+
+
+def prevalence_filtering_transform(anndata, keep):
+    return anndata[:, keep].copy()'''
+
+
 def increase_bin_size(anndata, factor, size=500) :
     chrom = np.asarray(anndata.var['chrom'])
     start = np.asarray(anndata.var['start'])
@@ -45,3 +58,17 @@ def increase_bin_size(anndata, factor, size=500) :
     new_data = (anndata.X.tocsr() @ M).tocsr() #all the bins in a group are summed together to form a new bin
     
     return ad.AnnData(X=new_data, obs=anndata.obs, var=pd.DataFrame({'chrom': new_chrom, 'start': new_start, 'end': new_end}))
+
+'''def preprocessing(adata_train, adata_val, factor, threshold):
+
+    # Increase bin size
+    train = increase_bin_size(adata_train, factor=factor)
+    val = increase_bin_size(adata_val, factor=factor)
+
+    # Prevalence filtering based only on train
+    keep = train.X.getnnz(axis=0) >= threshold
+
+    X_train = train[:, keep].X
+    X_val = val[:, keep].X
+
+    return X_train, X_val'''
