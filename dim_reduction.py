@@ -15,6 +15,19 @@ def LSI(anndata, n_components=50) :
         
     finally:
         anndata.X = counts
+    remove_comp_corr_with_depth(anndata)
+    
+
+def remove_comp_corr_with_depth(anndata, threshold = 0.75) :
+    depth = np.asarray(anndata.X.sum(axis=1)).flatten()
+    lsi = anndata.obsm['X_lsi']
+    remove = []
+    for i in range(lsi.shape[1]) :
+        corr = np.corrcoef(lsi[:, i], depth)[0, 1]
+        if abs(corr) > threshold :
+            remove.append(i)
+    anndata.obsm['X_lsi'] = np.delete(lsi, remove, axis=1)
+        
     
 
 def dim_red_pipeline(anndata, increase_bin = False, filtering=True, nbre_cells = 50, factor=1, n_components=50) :

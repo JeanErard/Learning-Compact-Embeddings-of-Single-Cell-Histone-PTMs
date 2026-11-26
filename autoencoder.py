@@ -151,3 +151,21 @@ def eval_emb(anndata) :
 
 def poisson_loss(out, x_true):
     return F.poisson_nll_loss(out.clamp(max=10), x_true, log_input=True)
+
+
+
+import scvi
+
+def AE_peakVI(anndata, seed=0) :
+    scvi.settings.seed = seed
+    scvi.model.PEAKVI.setup_anndata(anndata)
+    peakVI = scvi.model.PEAKVI(anndata)
+    peakVI.train()
+    anndata.obsm['X_peakVI'] = peakVI.get_latent_representation()
+    
+def AE_poissonVI(anndata, seed=0) :
+    scvi.settings.seed = seed
+    scvi.external.POISSONVI.setup_anndata(anndata)
+    poissonVI = scvi.external.POISSONVI(anndata)
+    poissonVI.train()
+    anndata.obsm['X_poissonVI'] = poissonVI.get_latent_representation()
